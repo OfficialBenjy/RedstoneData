@@ -1,0 +1,421 @@
+command /clearalldata:
+	trigger:
+		clear {data::*}
+
+
+on load:
+	set {data::loop} to true
+	while {data::loop} is true:
+		loop {data::downloader::*}:
+			if line 4 of block at location at loop-value is "0":
+				set {downping} to 4
+			else if line 4 of block at location at loop-value parsed as integer is not an integer:
+				set {downping} to 4
+			else if line 4 of block at location at loop-value is set:
+				set {downping} to line 4 of block at location at loop-value
+
+			#clear {data::downloaded}
+			if block 1 down location at loop-value is lit redstone lamp:
+				wait 5 ticks
+				if block 1 down location at loop-value is lit redstone lamp:
+					broadcast "The Downloads Ping is %{downping}% Ticks"
+
+					broadcast "intiating download"
+					set {data::download} to true
+					wait 0.1 seconds
+					clear {data::downloaded::*}
+					clear {data::downloaded}
+					while {data::download} is true:
+						wait "%{downping}% ticks" parsed as timespan
+						
+						if block 1 down location at loop-value is lit redstone lamp:
+							if {data::downloaded} is not set:
+								set {data::downloaded} to "1"
+							else:
+								set {data::downloaded} to "%{data::downloaded}%1"
+						else:
+							if {data::downloaded} is not set:
+								set {data::downloaded} to "0"
+							else:
+								set {data::downloaded} to "%{data::downloaded}%0"
+						broadcast "%{data::downloaded}%"
+						if length of {data::downloaded} is 8:			
+							broadcast "New 8-Bit string"
+							add {data::downloaded} to {data::downloaded::*}
+							#broadcast "%{data::downloaded::*}%"
+							if {data::downloaded} is "11111111" or "00000000":
+								broadcast "download stpoed"
+								clear {data::downloaded}
+								set {data::download} to false
+							clear {data::downloaded}
+						
+						wait "%{downping}% ticks" parsed as timespan
+					broadcast "%{data::downloaded::*}%"
+					broadcast "Converting Binary"
+
+					loop {data::downloaded::*}:
+						if loop-value-2 is "00100000":
+							add " " to {data::downloaded::converted::*}
+						if loop-value-2 is "01000001":
+							add "a" to {data::downloaded::converted::*}
+						if loop-value-2 is "01000010":
+							add "b" to {data::downloaded::converted::*}
+						if loop-value-2 is "01000011":
+							add "c" to {data::downloaded::converted::*}
+						if loop-value-2 is "01000100":
+							add "d" to {data::downloaded::converted::*}
+						if loop-value-2 is "01000101":
+							add "e" to {data::downloaded::converted::*}
+						if loop-value-2 is "01000110":
+							add "f" to {data::downloaded::converted::*}
+						if loop-value-2 is "01000111":
+							add "g" to {data::downloaded::converted::*}
+						if loop-value-2 is "01001000":
+							add "h" to {data::downloaded::converted::*}
+						if loop-value-2 is "01001001":
+							add "i" to {data::downloaded::converted::*}
+						if loop-value-2 is "01001010":
+							add "j" to {data::downloaded::converted::*}
+						if loop-value-2 is "01001011":
+							add "k" to {data::downloaded::converted::*}
+						if loop-value-2 is "01001100":
+							add "l" to {data::downloaded::converted::*}
+						if loop-value-2 is "01001101":
+							add "m" to {data::downloaded::converted::*}
+						if loop-value-2 is "01001110":
+							add "n" to {data::downloaded::converted::*}
+						if loop-value-2 is "01001111":
+							add "o" to {data::downloaded::converted::*}
+						if loop-value-2 is "01010000":
+							add "p" to {data::downloaded::converted::*}
+						if loop-value-2 is "01010001":
+							add "q" to {data::downloaded::converted::*}
+						if loop-value-2 is "01010010":
+							add "r" to {data::downloaded::converted::*}
+						if loop-value-2 is "01010011":
+							add "s" to {data::downloaded::converted::*}
+						if loop-value-2 is "01010100":
+							add "t" to {data::downloaded::converted::*}
+						if loop-value-2 is "01010101":
+							add "u" to {data::downloaded::converted::*}
+						if loop-value-2 is "01010110":
+							add "v" to {data::downloaded::converted::*}
+						if loop-value-2 is "01010111":
+							add "w" to {data::downloaded::converted::*}
+						if loop-value-2 is "01011000":
+							add "x" to {data::downloaded::converted::*}
+						if loop-value-2 is "01011001":
+							add "y" to {data::downloaded::converted::*}
+						if loop-value-2 is "01011010":
+							add "z" to {data::downloaded::converted::*}
+						clear {data::downloaded::converted}
+						broadcast "Patching together"
+					loop {data::downloaded::converted::*}:
+						if {data::downloaded::converted} is not set:
+							set {data::downloaded::converted} to "%loop-value-2%"
+						else:	
+							set {data::downloaded::converted} to "%{data::downloaded::converted}%%loop-value-2%"
+					broadcast "&b+=================================================================+"
+					broadcast "&c Downloaded"
+					broadcast "%{data::downloaded::*}%"
+					broadcast "test: %{data::downloaded::converted::*}%"
+					broadcast "&e %{data::downloaded::converted}%"
+					broadcast "&b+=================================================================+"
+
+		wait 1 tick
+
+#on load:
+#	set {data::loop} to true
+#	while {data::loop} is true:
+#		loop {data::downloader::*}:
+#			wait 0.7 seconds
+
+on sign change:
+	if line 1 of event-block is "[data]":
+		if line 2 of event-block is "up":
+			loop {data::emmiter::*}:
+				if loop-value is location of event-block:
+					stop
+			add location of event-block to {data::emmiter::*}
+			set {data::emitter::location::%line 2 of event-block%} to location of event-block
+			send "Uploader %line 3 of event-block% added"
+
+on sign change:
+	if line 1 of event-block is "[data]":
+		if line 2 of event-block is "down":
+			loop {data::downloader::*}:
+				if loop-value is location of event-block:
+					stop
+			add location of event-block to {data::downloader::*}
+			set {data::emitter::location::%line 2 of event-block%} to location of event-block
+			send "Downloader %line 3 of event-block% added"
+
+on right click on sign:
+	if line 1 of event-block is "[data]":
+		if line 2 of event-block is "down":
+			set {data::download} to false
+			send "download stopped"
+
+command /stoploop:
+	trigger:
+		send "Stoped Loop"
+		set {data::loop} to false
+on right click on sign:
+	if line 1 of event-block is "[data]":
+		if line 2 of event-block is "up":
+			set {data.%player%.edit} to line 3 of event-block
+			#open anvil gui named "data" to player with default text "New Data" and with item Yellow Concrete
+			set {data::sign} to location of event-block
+			send "%{data::sign}%"
+			clear {data::sign::*}
+			add x-coordinate of event-block to {data::sign::*}
+			add y-coordinate of event-block to {data::sign::*}
+			add z-coordinate of event-block to {data::sign::*}
+			add world of event-block to {data::sign::*}
+			set {data::trigger} to true
+			set {data::trigger::player} to player
+			send "&6&lType the new text in chat."
+			send "&6Old Text: %{alt::test}%"
+			close inventory of player
+
+			
+
+			#send "%{data::%player%::sign::1}%, %{data::%player%::sign::2}%, %{data::%player%::sign::3}% in world %{data::%player%::sign::4}%"
+
+on chat:
+	if {data::trigger} is true:
+		if {data::trigger::player} is event-player:
+			set {data::trigger} to false
+			cancel event
+			clear {data::%player%::*} 
+			set {_message} to message
+			set {data.%player%.lenght} to length of {_message}
+			set {data.%player%.temp} to message
+			set {data.%player%.temp2} to message
+			set {data.%player%.loop} to 1
+			loop {data.%player%.lenght} times:
+				send "lolz: %{data.%player%.temp2}%"
+				set {data.%player%.temp} to last (length of {data.%player%.temp} - 1) characters of message
+				add first 1 character of {data.%player%.temp2} to {data::%player%::*}
+				set {data.%player%.temp} to last (length of {data.%player%.temp2} - 1) characters of {data.%player%.temp}
+				set {data.%player%.temp2} to first 1 characters of {data.%player%.temp}
+
+				add 1 to {data.%player%.loop}
+
+		#	send "%{data::%player%::*}%"
+			loop {data::%player%::*}:
+				if loop-value is " ":
+					add "00100000" to {data::%player%::binary::*}
+				if loop-value is "a":
+					add "01000001" to {data::%player%::binary::*}
+				if loop-value is "b":
+					add "01000010" to {data::%player%::binary::*}
+				if loop-value is "c":
+					add "01000011" to {data::%player%::binary::*}
+				if loop-value is "d":
+					add "01000100" to {data::%player%::binary::*}
+				if loop-value is "e":
+					add "01000101" to {data::%player%::binary::*}
+				if loop-value is "f":
+					add "01000110" to {data::%player%::binary::*}
+				if loop-value is "g":
+					add "01000111" to {data::%player%::binary::*}
+				if loop-value is "h":
+					add "01001000" to {data::%player%::binary::*}
+				if loop-value is "i":
+					add "01001001" to {data::%player%::binary::*}
+				if loop-value is "j":
+					add "01001010" to {data::%player%::binary::*}
+				if loop-value is "k":
+					add "01001011" to {data::%player%::binary::*}
+				if loop-value is "l":
+					add "01001100" to {data::%player%::binary::*}
+				if loop-value is "m":
+					add "01001101" to {data::%player%::binary::*}
+				if loop-value is "n":
+					add "01001110" to {data::%player%::binary::*}
+				if loop-value is "o":
+					add "01001111" to {data::%player%::binary::*}
+				if loop-value is "p":
+					add "01010000" to {data::%player%::binary::*}
+				if loop-value is "q":
+					add "01010001" to {data::%player%::binary::*}
+				if loop-value is "r":
+					add "01010010" to {data::%player%::binary::*}
+				if loop-value is "s":
+					add "01010011" to {data::%player%::binary::*}
+				if loop-value is "t":
+					add "01010100" to {data::%player%::binary::*}
+				if loop-value is "u":
+					add "01010101" to {data::%player%::binary::*}
+				if loop-value is "v":
+					add "01010110" to {data::%player%::binary::*}
+				if loop-value is "w":
+					add "01010111" to {data::%player%::binary::*}
+				if loop-value is "x":
+					add "01011000" to {data::%player%::binary::*}
+				if loop-value is "y":
+					add "01011001" to {data::%player%::binary::*}
+				if loop-value is "z":
+					add "01011010" to {data::%player%::binary::*}
+			
+		#	send "%{data::%player%::binary::*}%"
+		
+			loop {data::%player%::binary::*}:
+				set {dataline.%player%.lenght} to loop-index
+		#		send "%{dataline.%player%.lenght}%"
+
+			clear {data::%player%}
+			loop {data::%player%::binary::*}:
+				if {data::%player%} is not set:
+					set {data::%player%} to "%loop-value%"
+				else:
+					set {data::%player%} to "%{data::%player%}%%loop-value%"
+
+		
+		#	send "%{data::%player%}%"
+		
+			set {dataline.%player%.lenght} to length of {data::%player%}
+		#	send "%length of {data::%player%}%"
+			clear {data::%player%::dataline::*}
+			loop {dataline.%player%.lenght} times:
+		#		send "lolz: %{data.%player%.temp3}%"
+				set {data::%player%} to last (length of {data::%player%} - 1) characters of {data::%player%}
+				add first 1 character of {data.%player%.temp3} to {data::%player%::dataline::*}
+				set {data::%player%} to last (length of {data.%player%.temp3} - 1) characters of {data::%player%}
+				set {data.%player%.temp3} to first 1 characters of {data::%player%}
+
+				add 1 to {data.%player%.loop}
+		#	send "DOES THIS WORK: %{data::sign}%"
+			#set {upping} to line 4 of block at location at {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4}
+			if line 4 of block at location {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4} is "0":
+				set {upping} to 4
+			else if line 4 of block at location {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4} parsed as integer is not an integer:
+				set {upping} to 4
+			else if line 4 of block at location {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4} is set:
+				set {upping} to line 4 of block at location {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4}
+			broadcast "The Upload Ping is %{upping}% Ticks"
+			broadcast "Estimated time of arrival: (({upping} * 2) * {messagelenght}) / 20 (((%{upping}% * 2) * %length of message%) / 20)"
+
+			set block 1 down location at {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4} to redstone block
+			wait 5 ticks
+			set block 1 down location at {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4} to Stone
+		
+
+
+			loop {data::%player%::dataline::*}:
+			#	send "In loop"
+				
+				if loop-value is "0":
+			#		broadcast "0"
+					set block 1 down location at {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4} to Stone
+					wait "%{upping}% ticks" parsed as timespan
+				if loop-value is "1":
+			#		broadcast "1"
+					set block 1 down location at {data::sign} to redstone block
+					wait "%{upping}% ticks" parsed as timespan
+					set block 1 down location at {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4} to Stone
+				wait "%{upping}% ticks" parsed as timespan
+			send "done looping"
+			wait 5 ticks
+			set block 1 down location at {data::sign::1}, {data::sign::2}, {data::sign::3} in world {data::sign::4} to Stone
+			#send "%{data::%player%::dataline::*}%"
+		#set block 1 down location at {data::%player%::sign::1}, {data::%player%::sign::2}, {data::%player%::sign::3} in world {data::%player%::sign::4} to Redstone Block
+		#send "%{data::%player%::sign::1}%, %{data::%player%::sign::2}%, %{data::%player%::sign::3}% in world %{data::%player%::sign::4}%"
+command /signloc [<player>]:
+	trigger:
+		send "%{data::%arg-1%::sign}%"
+		send "{data::%arg-1%::sign}"
+
+
+
+#function datafunctionone(d: text):: text:
+	#clear {_data::*}
+	#set {_lenght} to length of {_d}
+	#set {_temp} to {_d}
+	#set {_temp2} to {_d}
+	#set {_loop} to 1
+	#loop {_lenght} times:
+	#	send "lolz: %{_temp2}%"
+	#	set {_temp} to last (length of {_temp} - 1) characters of {_d}
+	#	add first 1 character of {_temp2} to {_data::*}
+	#	set {_temp} to last (length of {_temp2} - 1) characters of {_temp}
+	#	set {_temp2} to first 1 characters of {_temp}
+	#	add 1 to {_loop}
+	#return {_data::*}
+
+command /convert [<text>]:
+	trigger:
+		clear {data::%player%::*} 
+		set {_message} to arg-1
+		set {data.%player%.lenght} to length of arg-1
+		set {data.%player%.temp} to arg-1
+		set {data.%player%.temp2} to arg-1
+		set {data.%player%.loop} to 1
+		loop {data.%player%.lenght} times:
+			send "lolz: %{data.%player%.temp2}%"
+			set {data.%player%.temp} to last (length of {data.%player%.temp} - 1) characters of arg-1
+			add first 1 character of {data.%player%.temp2} to {data::%player%::*}
+			set {data.%player%.temp} to last (length of {data.%player%.temp2} - 1) characters of {data.%player%.temp}
+			set {data.%player%.temp2} to first 1 characters of {data.%player%.temp}
+
+			add 1 to {data.%player%.loop}
+
+		send "%{data::%player%::*}%"
+		loop {data::%player%::*}:
+			if loop-value is " ":
+				add "00100000" to {data::%player%::binary::*}
+			if loop-value is "a":
+				add "01000001" to {data::%player%::binary::*}
+			if loop-value is "b":
+				add "01000010" to {data::%player%::binary::*}
+			if loop-value is "c":
+				add "01000011" to {data::%player%::binary::*}
+			if loop-value is "d":
+				add "01000100" to {data::%player%::binary::*}
+			if loop-value is "e":
+				add "01000101" to {data::%player%::binary::*}
+			if loop-value is "f":
+				add "01000110" to {data::%player%::binary::*}
+			if loop-value is "g":
+				add "01000111" to {data::%player%::binary::*}
+			if loop-value is "h":
+				add "01001000" to {data::%player%::binary::*}
+			if loop-value is "i":
+				add "01001001" to {data::%player%::binary::*}
+			if loop-value is "j":
+				add "01001010" to {data::%player%::binary::*}
+			if loop-value is "k":
+				add "01001011" to {data::%player%::binary::*}
+			if loop-value is "l":
+				add "01001100" to {data::%player%::binary::*}
+			if loop-value is "m":
+				add "01001101" to {data::%player%::binary::*}
+			if loop-value is "n":
+				add "01001110" to {data::%player%::binary::*}
+			if loop-value is "o":
+				add "01001111" to {data::%player%::binary::*}
+			if loop-value is "p":
+				add "01010000" to {data::%player%::binary::*}
+			if loop-value is "q":
+				add "01010001" to {data::%player%::binary::*}
+			if loop-value is "r":
+				add "01010010" to {data::%player%::binary::*}
+			if loop-value is "s":
+				add "01010011" to {data::%player%::binary::*}
+			if loop-value is "t":
+				add "01010100" to {data::%player%::binary::*}
+			if loop-value is "u":
+				add "01010101" to {data::%player%::binary::*}
+			if loop-value is "v":
+				add "01010110" to {data::%player%::binary::*}
+			if loop-value is "w":
+				add "01010111" to {data::%player%::binary::*}
+			if loop-value is "x":
+				add "01011000" to {data::%player%::binary::*}
+			if loop-value is "y":
+				add "01011001" to {data::%player%::binary::*}
+			if loop-value is "z":
+				add "01011010" to {data::%player%::binary::*}
+
+		send "%{data::%player%::binary::*}%"
